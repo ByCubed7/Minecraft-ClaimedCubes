@@ -1,0 +1,150 @@
+author: ByCubed7
+description: A simple chunk claiming mod by ByCubed7.
+
+version: 1.2.9
+api-version: 1.18
+
+website: ByCubed7.github.io/commissions/plugins
+
+# Impo
+main: io.github.bycubed7.claimedcubes.Main
+name: ClaimedCubes
+prefix: ClaimedCubes
+
+load: POSTWORLD
+
+depend: [CoreCubes]
+
+# Permissions
+permissions:
+    claimedcubes.*:
+        description: Gives access to all commands
+        default: op
+        children:
+            claimedcubes.claim:     true
+            claimedcubes.unclaim:   true
+            claimedcubes.lock:      true
+            claimedcubes.unlock:    true
+            claimedcubes.accept:    true
+            claimedcubes.add:       true
+            claimedcubes.dissolve:  true
+            claimedcubes.kick:      true
+            claimedcubes.leave:     true
+            claimedcubes.banish:    true
+            claimedcubes.unbanish:  true
+            claimedcubes.reload:    true
+            claimedcubes.settings:  true
+
+    claimedcubes.claim:
+        description: Allows players to use the claim command.
+        default: true
+    claimedcubes.unclaim:
+        description: Allows players to use the unclaim command.
+        default: true
+
+    claimedcubes.lock:
+        description: Allows players to use the lock command.
+        default: op
+        children:
+            claimedcubes.lock.override:     true
+
+    claimedcubes.lock.override:
+        description: Allows players to override the lock command and edit in locked chunks.
+        default: op
+
+    claimedcubes.unlock:
+        description: Allows players to use the lock command.
+        default: op
+
+    claimedcubes.accept:
+        description: Allows players to accept an add member request.
+        default: true
+    claimedcubes.add:
+        description: Allows owners to request others to become members.
+        default: true
+
+    claimedcubes.dissolve:
+        description: Allows owners to delete their team.
+        default: true
+    claimedcubes.kick:
+        description: Allows owners to remove members.
+        default: true
+    claimedcubes.leave:
+        description: Allows members to leave their team.
+        default: true
+
+    claimedcubes.banish:
+        description: Allows owners to ban members from their plot.
+        default: true
+    claimedcubes.unbanish:
+        description: Allows owners to unban members from their plot.
+        default: true
+
+    claimedcubes.reload:
+        description: Allows players to reload the plugin from the config.
+        default: op
+
+    claimedcubes.settings:
+        description: Allows players to edit the plugins settings, if any.
+        default: op
+
+# Commands
+commands:
+    claim:
+        description: Claim a chunk of land.
+        permission: claimedcubes.claim
+        aliases: [c]
+        usage: /claim
+    unclaim:
+        description: Unclaim a chunk of land.
+        permission: claimedcubes.unclaim
+        usage: /unclaim
+
+    lock:
+        description: Locks a chunk, so that it cannot be claimed by players.
+        permission: claimedcubes.lock
+        aliases: [l]
+        usage: /lock
+    unlock:
+        description: Unlocks the chunk.
+        permission: claimedcubes.unlock
+        usage: /unlock
+
+    accept:
+        description: Accept an invite from a member join request.
+        permission: claimedcubes.accept
+        usage: /accept
+    add:
+        description: Send an invite to a player.
+        permission: claimedcubes.add
+        usage: /add <member name>
+    dissolve:
+        description: Dissolves the team, removing claims and members.
+        permission: claimedcubes.dissolve
+        usage: /dissolve
+    kick:
+        description: Removes a member from your team.
+        permission: claimedcubes.kick
+        usage: /kick <member name>
+    leave:
+        description: Removes yourself from your team.
+        permission: claimedcubes.leave
+        usage: /leave
+
+    banish:
+        description: Banish someone from your claim, so that they can not enter.
+        permission: claimedcubes.leave
+        usage: /banish <member name>
+    unbanish:
+        description: Unbanish someone from your claims.
+        permission: claimedcubes.leave
+        usage: /unbanish <member name>
+
+    reload:
+        description: Reload the plugin.
+        permission: claimedcubes.reload
+        usage: /reload
+    settings:
+        description: Edit one of the settings of the plugin.
+        permission: claimedcubes.settings
+        usage: /settings
