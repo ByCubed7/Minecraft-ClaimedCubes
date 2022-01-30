@@ -1,7 +1,7 @@
 author: ByCubed7
 description: A simple chunk claiming mod by ByCubed7.
 
-version: 1.2.9
+version: ${project.version}
 api-version: 1.18
 
 website: ByCubed7.github.io/commissions/plugins
