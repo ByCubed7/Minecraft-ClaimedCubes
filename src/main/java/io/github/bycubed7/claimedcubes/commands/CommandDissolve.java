@@ -12,7 +12,7 @@ import io.github.bycubed7.corecubes.managers.Tell;
 public class CommandDissolve extends Action {
 
 	public CommandDissolve(JavaPlugin _plugin) {
-		super("claim", _plugin);
+		super("dissolve", _plugin);
 		plugin.getCommand(name).setExecutor(this);
 	}
 

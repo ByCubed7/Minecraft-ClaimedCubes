@@ -62,7 +62,7 @@ public class CommandAdd extends Action {
 		Player addedPlayer = Bukkit.getPlayer(args[0]);
 
 		// Send a request to the player
-		// PlotManager.instance.findByAssociate(player.getUniqueId()).addMember(kickedPlayer.getUniqueId());
+		PlotManager.instance.findByAssociate(player.getUniqueId());
 		RequestManager.addRequest(addedPlayer.getUniqueId(), player.getUniqueId());
 
 		Tell.player(addedPlayer, player.getDisplayName() + " sent you a member request! use /accept to accept!");

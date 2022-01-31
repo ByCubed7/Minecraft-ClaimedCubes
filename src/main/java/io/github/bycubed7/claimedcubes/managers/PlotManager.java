@@ -53,8 +53,9 @@ public class PlotManager {
 		HashSet<Plot> playerPlots = new HashSet<Plot>();
 		plots.values().stream().filter(s -> s.associated(playerId)).forEach(s -> playerPlots.add(s));
 
+		// if the player does not have a plot, create one!
 		if (playerPlots.size() == 0)
-			return null;
+			return create(playerId);
 
 		// NOTE This is a dumb way of doing it
 		return playerPlots.toArray(new Plot[0])[0];
@@ -64,10 +65,6 @@ public class PlotManager {
 
 	public Plot claim(UUID playerId, Vector2Int coords) {
 		Plot playerPlot = findByAssociate(playerId);
-
-		// if the player does not have a plot, create one!
-		if (playerPlot == null)
-			playerPlot = create(playerId);
 
 		playerPlot.addClaim(coords);
 		plots.put(coords, playerPlot);

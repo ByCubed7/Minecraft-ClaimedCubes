@@ -75,6 +75,12 @@ public class Main extends JavaPlugin {
 
 		// Loading is done!
 		Debug.Log(ChatColor.GREEN + "Done!");
+
+		Debug.banner.add("  _______     _              _______     __");
+		Debug.banner.add(" / ___/ /__ _(_)_ _  ___ ___/ / ___/_ __/ /  ___ ___");
+		Debug.banner.add("/ /__/ / _ `/ /  ' \\/ -_) _  / /__/ // / _ \\/ -_|_-<");
+		Debug.banner.add("\\___/_/\\_,_/_/_/_/_/\\__/\\_,_/\\___/\\_,_/_.__/\\__/___/");
+
 		Debug.Banner();
 
 		// Using a schedular so that it runs once ALL plugins are loaded.
