@@ -20,8 +20,9 @@ public class CommandAdd extends Action {
 
 	protected ActionFailed approved(Player player, String[] args) {
 
-		if (args.length > 1)
+		if (args.length < 1) {
 			return ActionFailed.ARGUMENTLENGTH;
+		}
 
 		// Does the added player exist?
 		Player addedPlayer = Bukkit.getPlayer(args[0]);

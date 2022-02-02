@@ -18,6 +18,7 @@ import io.github.bycubed7.claimedcubes.commands.CommandUnclaim;
 import io.github.bycubed7.claimedcubes.commands.CommandUnlock;
 import io.github.bycubed7.claimedcubes.listeners.BlockListener;
 import io.github.bycubed7.claimedcubes.listeners.MovementListener;
+import io.github.bycubed7.claimedcubes.listeners.OnAttackListener;
 import io.github.bycubed7.claimedcubes.managers.DataManager;
 import io.github.bycubed7.claimedcubes.managers.PlotManager;
 import io.github.bycubed7.claimedcubes.managers.RequestManager;
@@ -51,6 +52,7 @@ public class Main extends JavaPlugin {
 		Debug.Log("Setting up Event Listeners..");
 		new BlockListener(this);
 		new MovementListener(this);
+		new OnAttackListener(this);
 
 		// Set up commands
 		Debug.Log("Setting up Commands..");

@@ -19,7 +19,7 @@ public class CommandBanish extends Action {
 
 	protected ActionFailed approved(Player player, String[] args) {
 
-		if (args.length > 1)
+		if (args.length < 1)
 			return ActionFailed.ARGUMENTLENGTH;
 
 		// Does the added player exist?
