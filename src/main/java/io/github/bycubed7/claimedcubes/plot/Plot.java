@@ -8,11 +8,10 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
 
+import io.github.bycubed7.corecubes.managers.Debug;
 import io.github.bycubed7.corecubes.unit.Vector2Int;
 
-@SuppressWarnings("unused")
 public class Plot implements Serializable {
 	private static final long serialVersionUID = 4015228406810175386L;
 
@@ -26,8 +25,6 @@ public class Plot implements Serializable {
 	// The name of the plot
 	private String name = "Plot";
 	private Set<Vector2Int> claims = new HashSet<>();
-
-	private boolean locked = false;
 
 	public Plot(UUID _ownerId) {
 		ownerId = _ownerId;
@@ -50,14 +47,20 @@ public class Plot implements Serializable {
 	}
 
 	public void addMember(UUID playerId) {
+		Debug.Log("[Plot.addMember] adding " + playerId.toString());
+		Debug.Log("[Plot.addMember] current members: " + members.toString());
 		members.add(playerId);
+		Debug.Log("[Plot.addMember] current members after: " + members.toString());
 	}
 
 	public void removeMember(UUID playerId) {
+		Debug.Log("[Plot.removeMember] removing member: " + playerId.toString());
 		members.remove(playerId);
 	}
 
 	public boolean hasMember(UUID playerId) {
+		Debug.Log("[Plot.hasMember] finding: " + playerId.toString());
+		Debug.Log("[Plot.hasMember] found? " + members.contains(playerId));
 		return members.contains(playerId);
 	}
 
@@ -93,6 +96,14 @@ public class Plot implements Serializable {
 		removeClaim(new Vector2Int(chunk.getX(), chunk.getZ()));
 	}
 
+	public boolean hasClaim(Vector2Int coords) {
+		return claims.contains(coords);
+	}
+
+	public boolean hasClaim(Chunk chunk) {
+		return hasClaim(new Vector2Int(chunk.getX(), chunk.getZ()));
+	}
+
 	// Permissions
 
 	public boolean hasPermission(UUID playerId, PlotPermission permission) {
@@ -115,12 +126,10 @@ public class Plot implements Serializable {
 		return ownerId;
 	}
 
-	public Player getOwner() {
-		return Bukkit.getPlayer(ownerId);
-	}
-
 	public String getOwnerName() {
-		return getOwner().getName();
+		if (ownerId == null)
+			return "Null";
+		return Bukkit.getOfflinePlayer(ownerId).getName();
 	}
 
 	public Set<Vector2Int> getClaims() {
@@ -141,9 +150,5 @@ public class Plot implements Serializable {
 		Plot c = (Plot) o;
 
 		return ownerId == c.ownerId;
-	}
-
-	public void transfer(UUID newOwnerId) {
-		ownerId = newOwnerId;
 	}
 }

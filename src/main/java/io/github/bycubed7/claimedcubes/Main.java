@@ -16,9 +16,10 @@ import io.github.bycubed7.claimedcubes.commands.CommandSettings;
 import io.github.bycubed7.claimedcubes.commands.CommandUnbanish;
 import io.github.bycubed7.claimedcubes.commands.CommandUnclaim;
 import io.github.bycubed7.claimedcubes.commands.CommandUnlock;
+import io.github.bycubed7.claimedcubes.listeners.AttackListener;
 import io.github.bycubed7.claimedcubes.listeners.BlockListener;
+import io.github.bycubed7.claimedcubes.listeners.InteractListener;
 import io.github.bycubed7.claimedcubes.listeners.MovementListener;
-import io.github.bycubed7.claimedcubes.listeners.OnAttackListener;
 import io.github.bycubed7.claimedcubes.managers.DataManager;
 import io.github.bycubed7.claimedcubes.managers.PlotManager;
 import io.github.bycubed7.claimedcubes.managers.RequestManager;
@@ -40,11 +41,11 @@ public class Main extends JavaPlugin {
 
 		Debug.Log("Setting up Managers..");
 		new PlotManager();
-		new RequestManager(this);
+		new RequestManager();
 
 		Debug.Log("Loading Data..");
 		new DataManager();
-		PlotManager.instance.load(DataManager.load());
+		PlotManager.load(DataManager.load());
 
 		// Get intergration api / settings
 		Debug.Log("Looking for Compatible Plugins..");
@@ -52,7 +53,8 @@ public class Main extends JavaPlugin {
 		Debug.Log("Setting up Event Listeners..");
 		new BlockListener(this);
 		new MovementListener(this);
-		new OnAttackListener(this);
+		new AttackListener(this);
+		new InteractListener(this);
 
 		// Set up commands
 		Debug.Log("Setting up Commands..");

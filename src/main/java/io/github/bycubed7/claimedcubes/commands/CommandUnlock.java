@@ -20,7 +20,7 @@ public class CommandUnlock extends Action {
 		Chunk chunk = player.getLocation().getChunk();
 
 		// Is this chunk not locked?
-		if (!PlotManager.instance.locked(chunk)) {
+		if (!PlotManager.locked(chunk)) {
 			Tell.player(player, "This chunk is not locked!");
 			return ActionFailed.OTHER;
 		}
@@ -32,7 +32,7 @@ public class CommandUnlock extends Action {
 		Chunk chunk = player.getLocation().getChunk();
 
 		// unlock the chunk
-		PlotManager.instance.unlock(chunk);
+		PlotManager.unlock(chunk);
 
 		Tell.player(player, "Unlocked this chunk!");
 		return true;

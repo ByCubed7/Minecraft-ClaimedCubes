@@ -21,7 +21,7 @@ public class CommandDissolve extends Action {
 		if (args.length > 1)
 			return ActionFailed.ARGUMENTLENGTH;
 
-		Plot plot = PlotManager.instance.findByAssociate(player.getUniqueId());
+		Plot plot = PlotManager.findByAssociate(player.getUniqueId());
 
 		// Is the player in a plot?
 		if (plot == null) {
@@ -39,7 +39,7 @@ public class CommandDissolve extends Action {
 	}
 
 	protected boolean execute(Player player, String[] args) {
-		PlotManager.instance.dissolve(player.getUniqueId());
+		PlotManager.remove(player.getUniqueId());
 
 		Tell.player(player, "Dissolved!");
 		return true;

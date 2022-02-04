@@ -34,14 +34,18 @@ public class MovementListener implements Listener {
 	private boolean playerMove(Location fromLocation, Location toLocation, Player player) {
 		Chunk from = fromLocation.getChunk();
 		Chunk to = toLocation.getChunk();
-		if (from == to)
+
+		if (from.equals(to))
 			return false;
 
-		Plot plotFrom = PlotManager.instance.getPlot(from);
-		Plot plotTo = PlotManager.instance.getPlot(to);
+		Plot plotFrom = PlotManager.findByChunk(from);
+		Plot plotTo = PlotManager.findByChunk(to);
+
+		if (plotFrom == plotTo)
+			return false;
 
 		// Entering a plot:
-		if (!PlotManager.instance.claimed(from) && PlotManager.instance.claimed(to)) {
+		if (PlotManager.claimed(to)) {
 
 			if (plotTo.hasBan(player.getUniqueId())) {
 				// You are banned >:(
@@ -53,13 +57,12 @@ public class MovementListener implements Listener {
 				Tell.actionbar(player, "Entering " + plotTo.getOwnerName() + "'s Plot! (Member)");
 			else
 				Tell.actionbar(player, "Entering " + plotTo.getOwnerName() + "'s Plot! (Visitor)");
-
-			return false;
 		}
 
 		// Exiting a plot
-		if (PlotManager.instance.claimed(from) && !PlotManager.instance.claimed(to))
+		else if (PlotManager.claimed(from)) {
 			Tell.actionbar(player, "You are exiting " + plotFrom.getOwnerName() + "'s Plot!");
+		}
 
 		return false;
 	}

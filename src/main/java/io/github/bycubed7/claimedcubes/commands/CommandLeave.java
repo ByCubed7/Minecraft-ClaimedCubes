@@ -3,6 +3,7 @@ package io.github.bycubed7.claimedcubes.commands;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import io.github.bycubed7.claimedcubes.managers.DataManager;
 import io.github.bycubed7.claimedcubes.managers.PlotManager;
 import io.github.bycubed7.claimedcubes.plot.Plot;
 import io.github.bycubed7.corecubes.commands.Action;
@@ -18,7 +19,7 @@ public class CommandLeave extends Action {
 
 	protected ActionFailed approved(Player player, String[] args) {
 
-		Plot plot = PlotManager.instance.findByAssociate(player.getUniqueId());
+		Plot plot = PlotManager.findByAssociate(player.getUniqueId());
 
 		// Is player part of a plot?
 		if (plot == null) {
@@ -36,8 +37,10 @@ public class CommandLeave extends Action {
 	}
 
 	protected boolean execute(Player player, String[] args) {
-		Plot plot = PlotManager.instance.findByAssociate(player.getUniqueId());
+		Plot plot = PlotManager.findByAssociate(player.getUniqueId());
+
 		plot.removeMember(player.getUniqueId());
+		DataManager.set(plot.getOwnerId(), plot);
 
 		Tell.player(player, "You have left the plot!");
 

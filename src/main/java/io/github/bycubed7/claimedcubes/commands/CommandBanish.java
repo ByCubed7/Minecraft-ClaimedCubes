@@ -29,7 +29,7 @@ public class CommandBanish extends Action {
 			return ActionFailed.OTHER;
 		}
 
-		Plot plot = PlotManager.instance.findByAssociate(player.getUniqueId());
+		Plot plot = PlotManager.findByAssociate(player.getUniqueId());
 
 		// Is the player in a plot?
 		if (plot == null) {
@@ -55,7 +55,7 @@ public class CommandBanish extends Action {
 	protected boolean execute(Player player, String[] args) {
 		Player kickedPlayer = Bukkit.getPlayer(args[0]);
 
-		PlotManager.instance.findByAssociate(player.getUniqueId()).addBan(kickedPlayer.getUniqueId());
+		PlotManager.findByAssociate(player.getUniqueId()).addBan(kickedPlayer.getUniqueId());
 
 		Tell.player(player, "Banished player!");
 		return true;

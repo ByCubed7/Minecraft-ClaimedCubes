@@ -6,8 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import io.github.bycubed7.claimedcubes.managers.DataManager;
 import io.github.bycubed7.claimedcubes.managers.PlotManager;
 import io.github.bycubed7.claimedcubes.managers.RequestManager;
+import io.github.bycubed7.claimedcubes.plot.Plot;
 import io.github.bycubed7.corecubes.commands.Action;
 import io.github.bycubed7.corecubes.commands.ActionFailed;
 import io.github.bycubed7.corecubes.managers.Tell;
@@ -21,11 +23,9 @@ public class CommandAccept extends Action {
 
 	protected ActionFailed approved(Player player, String[] args) {
 
-		UUID requesterID = RequestManager.get(player.getUniqueId());
-
 		// Has the player got any requests?
-		if (requesterID == null) {
-			Tell.player(player, "You havn't got any requests!");
+		if (!RequestManager.has(player.getUniqueId())) {
+			Tell.player(player, "You haven't got any requests!");
 			return ActionFailed.OTHER;
 		}
 
@@ -35,17 +35,18 @@ public class CommandAccept extends Action {
 	protected boolean execute(Player player, String[] args) {
 
 		UUID requesterID = RequestManager.get(player.getUniqueId());
-		Player requester = Bukkit.getPlayer(requesterID);
+		Plot requesterPlot = PlotManager.findByAssociate(requesterID);
 
 		// Remove the player from any current plots?
-		// PlotManager.instance.remove(player.getUniqueId());
-		PlotManager.instance.merge(player.getUniqueId(), requesterID);
+		if (PlotManager.hasPlotByOwner(player.getUniqueId()))
+			PlotManager.merge(PlotManager.findByOwner(player.getUniqueId()), requesterPlot);
+		// PlotManager.remove(PlotManager.findByOwner(player.getUniqueId()));
 
-		// Add player to requesters plots member list
-		PlotManager.instance.findByAssociate(requesterID).addMember(player.getUniqueId());
+		requesterPlot.addMember(player.getUniqueId());
+		DataManager.set(requesterID, requesterPlot);
 
-		Tell.player(requester, player.getDisplayName() + " accepted the request!");
-		Tell.player(player, "Accepted " + requester.getDisplayName() + "'s request!");
+		Tell.player(Bukkit.getPlayer(requesterID), player.getDisplayName() + " accepted the request!");
+		Tell.player(player, "Accepted " + requesterPlot.getOwnerName() + "'s request!");
 
 		RequestManager.remove(player.getUniqueId());
 

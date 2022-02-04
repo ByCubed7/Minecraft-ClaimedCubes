@@ -22,14 +22,14 @@ public class CommandUnclaim extends Action {
 		Chunk chunk = player.getLocation().getChunk();
 
 		// Does plot exist?
-		if (!PlotManager.instance.hasPlot(chunk)) {
+		if (!PlotManager.hasPlotByChunk(chunk)) {
 			// This plot is not claimed!
 			Tell.player(player, "This chunk is not claimed!");
 			return ActionFailed.OTHER;
 		}
 
 		// Is the plot owned by the player?
-		if (!PlotManager.instance.getPlot(chunk).associated(player.getUniqueId())) {
+		if (!PlotManager.findByChunk(chunk).associated(player.getUniqueId())) {
 			// This plot is not claimed!
 			Tell.player(player, "You don't own this claim!");
 			return ActionFailed.OTHER;
@@ -41,7 +41,7 @@ public class CommandUnclaim extends Action {
 	protected boolean execute(Player player, String[] args) {
 		Chunk chunk = player.getLocation().getChunk();
 
-		PlotManager.instance.unclaim(chunk);
+		PlotManager.unclaim(chunk);
 
 		Tell.player(player, "Unclaimed the chunk!");
 		return true;

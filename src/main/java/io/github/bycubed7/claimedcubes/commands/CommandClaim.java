@@ -24,13 +24,13 @@ public class CommandClaim extends Action {
 		Chunk chunk = player.getLocation().getChunk();
 
 		// Is plot already claimed?
-		if (PlotManager.instance.claimed(chunk)) {
+		if (PlotManager.claimed(chunk)) {
 			Tell.player(player, "This chunk is already claimed!");
 			return ActionFailed.OTHER;
 		}
 
 		// Is plot locked?
-		if (PlotManager.instance.locked(chunk)) {
+		if (PlotManager.locked(chunk)) {
 			Tell.player(player, "This chunk is locked!");
 			return ActionFailed.OTHER;
 		}
@@ -41,7 +41,7 @@ public class CommandClaim extends Action {
 	protected boolean execute(Player player, String[] args) {
 		Chunk chunk = player.getLocation().getChunk();
 
-		PlotManager.instance.claim(player.getUniqueId(), chunk);
+		PlotManager.claim(player.getUniqueId(), chunk);
 
 		Tell.player(player, "Claimed this chunk!");
 		return true;

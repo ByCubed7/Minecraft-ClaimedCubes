@@ -36,22 +36,22 @@ public class CommandAdd extends Action {
 			return ActionFailed.OTHER;
 		}
 
-		Plot plot = PlotManager.instance.findByAssociate(player.getUniqueId());
+		Plot plot = PlotManager.findByAssociate(player.getUniqueId());
 
 		// Is the added player in your plot already
-		if (!plot.associated(addedPlayer.getUniqueId())) {
+		if (plot.associated(addedPlayer.getUniqueId())) {
 			Tell.player(player, "Can't add someone who's already a member!");
 			return ActionFailed.OTHER;
 		}
 
 		// Is the added player already a member of another plot?
-		if (PlotManager.instance.findByAssociate(player.getUniqueId()) != null) {
-			Tell.player(player, "The player is already part of a plot!");
-			return ActionFailed.OTHER;
-		}
+		// if (PlotManager.instance.findByAssociate(player.getUniqueId()) != null) {
+		// Tell.player(player, "The player is already part of another plot!");
+		// return ActionFailed.OTHER;
+		// }
 
 		// Does the player have permission to add?
-		if (player.getUniqueId().equals(plot.getOwnerId())) {
+		if (!player.getUniqueId().equals(plot.getOwnerId())) {
 			Tell.player(player, "You don't have permission to do this!");
 			return ActionFailed.OTHER;
 		}
@@ -63,7 +63,7 @@ public class CommandAdd extends Action {
 		Player addedPlayer = Bukkit.getPlayer(args[0]);
 
 		// Send a request to the player
-		PlotManager.instance.findByAssociate(player.getUniqueId());
+		PlotManager.findByAssociate(player.getUniqueId());
 		RequestManager.addRequest(addedPlayer.getUniqueId(), player.getUniqueId());
 
 		Tell.player(addedPlayer, player.getDisplayName() + " sent you a member request! use /accept to accept!");

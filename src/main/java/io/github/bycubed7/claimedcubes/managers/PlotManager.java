@@ -4,170 +4,188 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
+
 import org.bukkit.Chunk;
 
 import io.github.bycubed7.claimedcubes.plot.Plot;
 import io.github.bycubed7.corecubes.unit.Vector2Int;
 
 public class PlotManager {
-	public static PlotManager instance;
+	public static UUID lockedUUID = new UUID(0, 0);
 
-	public static UUID lockedUUID = null;// new UUID(0, 0);
-
-	private HashMap<Vector2Int, Plot> plots;
+	private static HashSet<Plot> plots;
 
 	public PlotManager() {
-		instance = this;
-		plots = new HashMap<Vector2Int, Plot>();
+		plots = new HashSet<Plot>();
 	}
 
-	public void load(HashMap<UUID, Plot> data) {
-		data.forEach((i, p) -> p.getClaims().forEach(c -> plots.put(c, p)));
+	public static void load(HashMap<UUID, Plot> data) {
+		data.forEach((id, plot) -> plots.add(plot));
 	}
 
 	// Plots
 
-	public Plot create(UUID ownerId) {
-		// Debug.Log("[Plot Manager] Creating plot for player");
+	public static Plot create(UUID ownerId) {
 		Plot newPlot = new Plot(ownerId);
+		plots.add(newPlot);
+		DataManager.set(ownerId, newPlot);
 		return newPlot;
 	}
 
-	public void merge(UUID from, UUID to) {
-		plots.forEach((a, b) -> {
-			if (b.getOwnerId().equals(from))
-				b.transfer(to);
-			;
-		});
+	// Find plots by:
+
+	public static Plot findByOwner(UUID ownerId) {
+		if (ownerId == null)
+			return plots.stream().filter(plot -> plot.getOwnerId() == null).findFirst().orElse(null);
+		return plots.stream().filter(plot -> ownerId.equals(plot.getOwnerId())).findFirst().orElse(null);
 	}
 
-	public void remove(UUID from) {
-		plots.forEach((a, b) -> {
-			if (b.getOwnerId().equals(from))
-				plots.remove(a, b);
-		});
+	public static Plot findByAssociate(UUID associateId) {
+		return plots.stream().filter(plot -> plot.associated(associateId)).findFirst().orElse(null);
 	}
 
-	public Plot findByAssociate(UUID playerId) {
-		// Returns a plot by searching through the hash
-		HashSet<Plot> playerPlots = new HashSet<Plot>();
-		plots.values().stream().filter(s -> s.associated(playerId)).forEach(s -> playerPlots.add(s));
-
-		// if the player does not have a plot, create one!
-		if (playerPlots.size() == 0)
-			return create(playerId);
-
-		// NOTE This is a dumb way of doing it
-		return playerPlots.toArray(new Plot[0])[0];
+	public static Plot findByCoords(@Nonnull Vector2Int coords) {
+		return plots.stream().filter(plot -> plot.hasClaim(coords)).findFirst().orElse(null);
 	}
 
-	// Claiming
+	// Has plots by:
 
-	public Plot claim(UUID playerId, Vector2Int coords) {
+	public static boolean hasPlotByOwner(UUID ownerId) {
+		return findByOwner(ownerId) != null;
+	}
+
+	public static boolean hasPlotByAssociate(UUID associateId) {
+		return findByAssociate(associateId) != null;
+	}
+
+	public static boolean hasPlotByCoords(@Nonnull Vector2Int coords) {
+		return findByCoords(coords) != null;
+	}
+
+	//
+	// Main data methods
+
+	public static void merge(Plot from, Plot to) {
+		// TO gains the claims from FROM
+		from.getClaims().stream().forEach(claim -> to.addClaim(claim));
+		DataManager.set(from.getOwnerId(), from);
+		remove(from);
+	}
+
+	public static void remove(Plot plot) {
+		plots.remove(plot);
+		DataManager.remove(plot.getOwnerId());
+	}
+
+	public static void claim(UUID playerId, Vector2Int coords) {
 		Plot playerPlot = findByAssociate(playerId);
-
+		if (playerPlot == null)
+			playerPlot = create(playerId);
 		playerPlot.addClaim(coords);
-		plots.put(coords, playerPlot);
-
 		DataManager.set(playerId, playerPlot);
-
-		return playerPlot;
-
 	}
 
-	public void claim(UUID uniqueId, Chunk chunk) {
+	public static void unclaim(Vector2Int coords) {
+		Plot plot = findByCoords(coords);
+		plot.removeClaim(coords);
+		DataManager.set(plot.getOwnerId(), plot);
+	}
+
+	public static void lock(Vector2Int coords) {
+		Plot lockedPlot = findByOwner(lockedUUID);
+		// if the manager does not have a lock plot
+		if (lockedPlot == null)
+			lockedPlot = create(lockedUUID);
+
+		lockedPlot.addClaim(coords);
+
+		// Save
+		DataManager.set(lockedPlot.getOwnerId(), lockedPlot);
+	}
+
+	public static void unlock(Vector2Int coords) {
+		Plot lockedPlot = getLockPlot();
+
+		lockedPlot.removeClaim(coords);
+		DataManager.set(lockedUUID, lockedPlot);
+	}
+
+	private static @Nonnull Plot getLockPlot() {
+		Plot lockedPlot = findByOwner(lockedUUID);
+		// if the manager does not have a lock plot
+		if (lockedPlot == null)
+			lockedPlot = create(lockedUUID);
+
+		return lockedPlot;
+	}
+
+	public static Boolean claimed(Vector2Int coords) {
+		Plot plot = findByCoords(coords);
+		if (plot == null)
+			return false;
+
+		if (locked(coords))
+			return false;
+
+		return true;
+	}
+
+	public static Boolean locked(Vector2Int coords) {
+		return getLockPlot().hasClaim(coords);
+	}
+
+	// Player Convenience methods
+
+	public static void remove(UUID playerId) {
+		remove(findByAssociate(playerId));
+	}
+
+	public static void merge(UUID fromPlayerId, UUID toPlayerId) {
+		merge(findByAssociate(fromPlayerId), findByAssociate(toPlayerId));
+	}
+
+	// Chunk Convenience methods
+
+	public static Plot findByChunk(Chunk chunk) {
+		return findByCoords(coords(chunk));
+	}
+
+	public static boolean hasPlotByChunk(Chunk chunk) {
+		return findByChunk(chunk) != null;
+	}
+
+	//
+
+	public static void claim(UUID uniqueId, Chunk chunk) {
 		claim(uniqueId, coords(chunk));
 	}
 
-	public void unclaim(Vector2Int coords) {
-		getPlot(coords).removeClaim(coords);
-		plots.remove(coords);
-	}
-
-	public void unclaim(Chunk chunk) {
+	public static void unclaim(Chunk chunk) {
 		unclaim(coords(chunk));
 	}
 
-	public void dissolve(UUID uniqueId) {
-		plots.forEach((pos, plot) -> {
-			if (plot.associated(uniqueId))
-				unclaim(pos);
-		});
-	}
-
-	public Boolean claimed(Vector2Int coords) {
-		return plots.containsKey(coords) && !plots.get(coords).associated(lockedUUID);
-	}
-
-	public Boolean claimed(Chunk chunk) {
+	public static Boolean claimed(Chunk chunk) {
 		return claimed(coords(chunk));
 	}
 
-	// Locking
+	//
 
-	public void lock(Vector2Int coords) {
-		Plot plot = findByAssociate(lockedUUID);
-		// if the manager does not have a lock plot
-		if (plot == null)
-			plot = create(lockedUUID);
-
-		plot.addClaim(coords);
-		plots.put(coords, plot);
-
-		// Save
-		DataManager.set(lockedUUID, plot);
-	}
-
-	public void lock(Chunk chunk) {
+	public static void lock(Chunk chunk) {
 		lock(coords(chunk));
 	}
 
-	public void unlock(Vector2Int coords) {
-		Plot plot = findByAssociate(lockedUUID);
-		// if the manager does not have a lock plot
-		if (plot == null)
-			plot = create(lockedUUID);
-
-		plot.removeClaim(coords);
-		plots.remove(coords, plot);
-
-		DataManager.set(lockedUUID, plot);
-	}
-
-	public void unlock(Chunk chunk) {
+	public static void unlock(Chunk chunk) {
 		unlock(coords(chunk));
 	}
 
-	public Boolean locked(Vector2Int coords) {
-		return plots.containsKey(coords) && plots.get(coords).associated(lockedUUID);
-	}
-
-	public Boolean locked(Chunk chunk) {
+	public static Boolean locked(Chunk chunk) {
 		return locked(coords(chunk));
 	}
 
-	// Get
+	//
 
-	public Plot getPlot(Vector2Int coords) {
-		return plots.get(coords);
-	}
-
-	public Plot getPlot(Chunk chunk) {
-		return getPlot(coords(chunk));
-	}
-
-	// Has Contains
-
-	public boolean hasPlot(Vector2Int coords) {
-		// Debug.Log("[Plot Manager] Has plot was called");
-		return plots.containsKey(coords);
-	}
-
-	public boolean hasPlot(Chunk chunk) {
-		return hasPlot(coords(chunk));
-	}
-
-	static private Vector2Int coords(Chunk chunk) {
+	private static Vector2Int coords(Chunk chunk) {
 		return new Vector2Int(chunk.getX(), chunk.getZ());
 	}
 

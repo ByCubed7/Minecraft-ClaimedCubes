@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import io.github.bycubed7.claimedcubes.managers.DataManager;
 import io.github.bycubed7.claimedcubes.managers.PlotManager;
 import io.github.bycubed7.claimedcubes.plot.Plot;
 import io.github.bycubed7.corecubes.commands.Action;
@@ -29,7 +30,7 @@ public class CommandUnbanish extends Action {
 			return ActionFailed.OTHER;
 		}
 
-		Plot plot = PlotManager.instance.findByAssociate(player.getUniqueId());
+		Plot plot = PlotManager.findByAssociate(player.getUniqueId());
 
 		// Is the player in a plot?
 		if (plot == null) {
@@ -55,7 +56,9 @@ public class CommandUnbanish extends Action {
 	protected boolean execute(Player player, String[] args) {
 		Player unbanishedPlayer = Bukkit.getPlayer(args[0]);
 
-		PlotManager.instance.findByAssociate(player.getUniqueId()).removeBan(unbanishedPlayer.getUniqueId());
+		Plot plot = PlotManager.findByAssociate(player.getUniqueId());
+		plot.removeBan(unbanishedPlayer.getUniqueId());
+		DataManager.set(plot.getOwnerId(), plot);
 
 		Tell.player(player, "Unbanished player!");
 		return true;

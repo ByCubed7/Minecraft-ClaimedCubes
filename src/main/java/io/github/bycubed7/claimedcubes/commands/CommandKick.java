@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import io.github.bycubed7.claimedcubes.managers.DataManager;
 import io.github.bycubed7.claimedcubes.managers.PlotManager;
 import io.github.bycubed7.claimedcubes.plot.Plot;
 import io.github.bycubed7.corecubes.commands.Action;
@@ -30,7 +31,7 @@ public class CommandKick extends Action {
 		}
 
 		// Is the player an member of a plot?
-		Plot plot = PlotManager.instance.findByAssociate(player.getUniqueId());
+		Plot plot = PlotManager.findByAssociate(player.getUniqueId());
 		if (plot == null) {
 			Tell.player(player, "You don't have a plot to kick them from!");
 			return ActionFailed.OTHER;
@@ -42,7 +43,7 @@ public class CommandKick extends Action {
 			return ActionFailed.OTHER;
 		}
 
-		// Is the kicked player in the plot
+		// Is the kicked player in another plot
 		if (!plot.associated(kickedPlayer.getUniqueId())) {
 			Tell.player(player, "Can't kick someone who's not in your plot!");
 		}
@@ -59,9 +60,12 @@ public class CommandKick extends Action {
 	protected boolean execute(Player player, String[] args) {
 		Player kickedPlayer = Bukkit.getPlayer(args[0]);
 
-		PlotManager.instance.findByAssociate(player.getUniqueId()).removeMember(kickedPlayer.getUniqueId());
+		Plot plot = PlotManager.findByAssociate(player.getUniqueId());
+		plot.removeMember(kickedPlayer.getUniqueId());
+		DataManager.set(player.getUniqueId(), plot);
 
 		Tell.player(player, "Kicked member!");
+		// Tell.player(kickedPlayer, "You have been kicked!");
 		return true;
 	}
 }

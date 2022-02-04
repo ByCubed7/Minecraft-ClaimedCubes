@@ -20,7 +20,7 @@ public class CommandLock extends Action {
 		Chunk chunk = player.getLocation().getChunk();
 
 		// Is this chunk already locked?
-		if (PlotManager.instance.locked(chunk)) {
+		if (PlotManager.locked(chunk)) {
 			Tell.player(player, "This chunk is already locked!");
 			return ActionFailed.OTHER;
 		}
@@ -32,7 +32,7 @@ public class CommandLock extends Action {
 		Chunk chunk = player.getLocation().getChunk();
 
 		// Lock the chunk
-		PlotManager.instance.lock(chunk);
+		PlotManager.lock(chunk);
 
 		Tell.player(player, "Locked this chunk!");
 		return true;
