@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.bycubed7.claimedcubes.managers.PlotManager;
+import io.github.bycubed7.claimedcubes.plot.Plot;
 import io.github.bycubed7.corecubes.commands.Action;
 import io.github.bycubed7.corecubes.commands.ActionFailed;
 import io.github.bycubed7.corecubes.managers.Tell;
@@ -28,10 +29,18 @@ public class CommandUnclaim extends Action {
 			return ActionFailed.OTHER;
 		}
 
+		Plot plot = PlotManager.findByChunk(chunk);
+
 		// Is the plot owned by the player?
-		if (!PlotManager.findByChunk(chunk).associated(player.getUniqueId())) {
+		if (!plot.associated(player.getUniqueId())) {
 			// This plot is not claimed!
 			Tell.player(player, "You don't own this claim!");
+			return ActionFailed.OTHER;
+		}
+
+		// Does the player have permission?
+		if (!player.getUniqueId().equals(plot.getOwnerId())) {
+			Tell.player(player, "You don't have permission to do this!");
 			return ActionFailed.OTHER;
 		}
 

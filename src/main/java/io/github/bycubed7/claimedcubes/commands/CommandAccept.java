@@ -35,7 +35,11 @@ public class CommandAccept extends Action {
 	protected boolean execute(Player player, String[] args) {
 
 		UUID requesterID = RequestManager.get(player.getUniqueId());
-		Plot requesterPlot = PlotManager.findByAssociate(requesterID);
+		Plot requesterPlot = PlotManager.findByAssociate(requesterID); // <-- BUG RETURNS NULL
+
+		// If the requesterPlot can't be found, create one!
+		if (requesterPlot == null)
+			PlotManager.create(requesterID);
 
 		// Remove the player from any current plots?
 		if (PlotManager.hasPlotByOwner(player.getUniqueId()))

@@ -16,13 +16,13 @@ public class RequestManager {
 	}
 
 	public static void addRequest(UUID to, UUID from) {
-		Request request = new Request(to, from, System.currentTimeMillis());
+		Request request = new Request(from, to, System.currentTimeMillis());
 		requests.put(to, request);
 	}
 
 	public static UUID get(UUID to) {
-		Request get = requests.get(to);
-		if (get == null)
+		Request tosRequest = requests.get(to);
+		if (tosRequest == null)
 			return null;
 
 		// Is request timed out?
@@ -31,7 +31,7 @@ public class RequestManager {
 //			return null;
 //		}
 
-		return get.from;
+		return tosRequest.from;
 	}
 
 	public static void remove(UUID to) {

@@ -30,7 +30,7 @@ public class CommandDissolve extends Action {
 		}
 
 		// Does the player have permission?
-		if (player.getUniqueId().equals(plot.getOwnerId())) {
+		if (!player.getUniqueId().equals(plot.getOwnerId())) {
 			Tell.player(player, "You don't have permission to do this!");
 			return ActionFailed.OTHER;
 		}
