@@ -9,7 +9,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 
-import io.github.bycubed7.corecubes.managers.Debug;
 import io.github.bycubed7.corecubes.unit.Vector2Int;
 
 public class Plot implements Serializable {
@@ -47,20 +46,14 @@ public class Plot implements Serializable {
 	}
 
 	public void addMember(UUID playerId) {
-		Debug.Log("[Plot.addMember] adding " + playerId.toString());
-		Debug.Log("[Plot.addMember] current members: " + members.toString());
 		members.add(playerId);
-		Debug.Log("[Plot.addMember] current members after: " + members.toString());
 	}
 
 	public void removeMember(UUID playerId) {
-		Debug.Log("[Plot.removeMember] removing member: " + playerId.toString());
 		members.remove(playerId);
 	}
 
 	public boolean hasMember(UUID playerId) {
-		Debug.Log("[Plot.hasMember] finding: " + playerId.toString());
-		Debug.Log("[Plot.hasMember] found? " + members.contains(playerId));
 		return members.contains(playerId);
 	}
 

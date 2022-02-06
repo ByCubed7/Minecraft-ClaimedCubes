@@ -65,7 +65,7 @@ public class DataManager {
 
 		// If the file doesnt exist, create it!
 		if (!new File(filePath).exists()) {
-			Debug.Log("Creating new data file!");
+			Debug.log("Creating new data file!");
 			save();
 		}
 

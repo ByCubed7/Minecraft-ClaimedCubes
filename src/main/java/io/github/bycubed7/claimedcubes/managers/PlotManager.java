@@ -9,7 +9,6 @@ import javax.annotation.Nonnull;
 import org.bukkit.Chunk;
 
 import io.github.bycubed7.claimedcubes.plot.Plot;
-import io.github.bycubed7.corecubes.managers.Debug;
 import io.github.bycubed7.corecubes.unit.Vector2Int;
 
 public class PlotManager {
@@ -30,7 +29,7 @@ public class PlotManager {
 	public static Plot create(UUID ownerId) {
 		Plot newPlot = new Plot(ownerId);
 
-		Debug.Log("Create plot with tied UUID: " + ownerId);
+		// Debug.log("Create plot with tied UUID: " + ownerId);
 
 		plots.add(newPlot);
 		DataManager.set(ownerId, newPlot);

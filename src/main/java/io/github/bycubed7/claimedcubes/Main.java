@@ -1,8 +1,5 @@
 package io.github.bycubed7.claimedcubes;
 
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import io.github.bycubed7.claimedcubes.commands.CommandAccept;
 import io.github.bycubed7.claimedcubes.commands.CommandAdd;
 import io.github.bycubed7.claimedcubes.commands.CommandBanish;
@@ -23,42 +20,38 @@ import io.github.bycubed7.claimedcubes.listeners.MovementListener;
 import io.github.bycubed7.claimedcubes.managers.DataManager;
 import io.github.bycubed7.claimedcubes.managers.PlotManager;
 import io.github.bycubed7.claimedcubes.managers.RequestManager;
-import io.github.bycubed7.corecubes.managers.ConfigManager;
-import io.github.bycubed7.corecubes.managers.Debug;
+import io.github.bycubed7.corecubes.CubePlugin;
 
-public class Main extends JavaPlugin {
-
-	public static Main instance;
+public class Main extends CubePlugin {
 
 	@Override
-	public void onEnable() {
-		instance = this;
-		new Debug(this);
+	protected void onBoot() {
+		banner.add("  _______     _              _______     __");
+		banner.add(" / ___/ /__ _(_)_ _  ___ ___/ / ___/_ __/ /  ___ ___");
+		banner.add("/ /__/ / _ `/ /  ' \\/ -_) _  / /__/ // / _ \\/ -_|_-<");
+		banner.add("\\___/_/\\_,_/_/_/_/_/\\__/\\_,_/\\___/\\_,_/_.__/\\__/___/");
 
-		// Read config
-		Debug.Log("Reading Config..");
-		new ConfigManager(this, "default.yml");
+	}
 
-		Debug.Log("Setting up Managers..");
+	@Override
+	protected void onManagers() {
 		new PlotManager();
 		new RequestManager();
-
-		Debug.Log("Loading Data..");
 		new DataManager();
+
 		PlotManager.load(DataManager.load());
+	}
 
-		// Get intergration api / settings
-		Debug.Log("Looking for Compatible Plugins..");
-
-		Debug.Log("Setting up Event Listeners..");
+	@Override
+	protected void onListeners() {
 		new BlockListener(this);
 		new MovementListener(this);
 		new AttackListener(this);
 		new InteractListener(this);
+	}
 
-		// Set up commands
-		Debug.Log("Setting up Commands..");
-
+	@Override
+	protected void onCommands() {
 		new CommandClaim(this);
 		new CommandUnclaim(this);
 
@@ -76,26 +69,15 @@ public class Main extends JavaPlugin {
 
 		new CommandReload(this);
 		new CommandSettings(this);
-
-		// Loading is done!
-		Debug.Log(ChatColor.GREEN + "Done!");
-
-		Debug.banner.add("  _______     _              _______     __");
-		Debug.banner.add(" / ___/ /__ _(_)_ _  ___ ___/ / ___/_ __/ /  ___ ___");
-		Debug.banner.add("/ /__/ / _ `/ /  ' \\/ -_) _  / /__/ // / _ \\/ -_|_-<");
-		Debug.banner.add("\\___/_/\\_,_/_/_/_/_/\\__/\\_,_/\\___/\\_,_/_.__/\\__/___/");
-
-		Debug.Banner();
-
-		// Using a schedular so that it runs once ALL plugins are loaded.
-		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-			@Override
-			public void run() {
-				onStart();
-			}
-		});
 	}
 
+	@Override
+	protected void onReady() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public void onStart() {
 		// Called at the start and after /reload
 	}
